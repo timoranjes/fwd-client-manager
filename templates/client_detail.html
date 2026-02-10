@@ -3,71 +3,53 @@
 {% block title %}{{ client['name'] }} - FWD Client Manager{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-start mb-3">
     <div>
         <h1 class="page-title">{{ client['name'] }}</h1>
-        <p class="text-muted mb-0">
+        <div>
             {% if client['policy_type'] %}
-                <span class="badge bg-light text-dark me-2">{{ client['policy_type'] }}</span>
+                <span class="badge-status badge-active" style="margin-right: 8px;">{{ client['policy_type'] }}</span>
             {% endif %}
-            <span class="badge badge-status badge-{{ client['status']|lower }}">{{ client['status'] }}</span>
-        </p>
+            <span class="badge-status badge-{{ client['status']|lower }}">{{ client['status'] }}</span>
+        </div>
     </div>
     <div class="d-flex gap-2">
         <a href="{{ url_for('edit_client', client_id=client['id']) }}" class="btn btn-outline-secondary">
             <i class="fas fa-edit"></i> Edit
         </a>
-        <a href="{{ url_for('delete_client', client_id=client['id']) }}" class="btn btn-outline-danger"
-           onclick="return confirm('Are you sure you want to delete {{ client['name'] }}?')">
-            <i class="fas fa-trash"></i> Delete
+        <a href="{{ url_for('delete_client', client_id=client['id']) }}" class="btn btn-outline-danger" onclick="return confirm('Delete this client?')">
+            <i class="fas fa-trash"></i>
         </a>
     </div>
 </div>
 
-<div class="row g-4">
-    <!-- Client Info -->
-    <div class="col-lg-4">
-        <div class="data-card mb-4">
-            <div class="data-card-header">
-                <i class="fas fa-user me-2"></i> Contact Information
-            </div>
-            <div class="data-card-body">
-                <div class="mb-3">
-                    <label class="text-muted small">Email</label>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Contact</div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <div style="color: #6b7280; font-size: 0.75rem;">Email</div>
                     <div>{{ client['email'] or 'Not provided' }}</div>
                 </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Phone</label>
+                <div class="mb-2">
+                    <div style="color: #6b7280; font-size: 0.75rem;">Phone</div>
                     <div>{{ client['phone'] or 'Not provided' }}</div>
                 </div>
-                <div class="mb-3">
-                    <label class="text-muted small">WeChat</label>
-                    <div>{{ client['wechat'] or 'Not provided' }}</div>
-                </div>
-                <hr>
-                <div class="mb-3">
-                    <label class="text-muted small">Created</label>
-                    <div>{{ client['created_at'][:10] }}</div>
-                </div>
                 <div>
-                    <label class="text-muted small">Last Updated</label>
-                    <div>{{ client['updated_at'][:10] }}</div>
+                    <div style="color: #6b7280; font-size: 0.75rem;">WeChat</div>
+                    <div>{{ client['wechat'] or 'Not provided' }}</div>
                 </div>
             </div>
         </div>
-        
-        <div class="data-card">
-            <div class="data-card-header">
-                <i class="fas fa-file-contract me-2"></i> Policy Details
-            </div>
-            <div class="data-card-body">
-                <div class="mb-3">
-                    <label class="text-muted small">Policy Type</label>
-                    <div>{{ client['policy_type'] or 'Not specified' }}</div>
-                </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Coverage Amount</label>
-                    <div class="h5">
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Policy</div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <div style="color: #6b7280; font-size: 0.75rem;">Coverage</div>
+                    <div style="font-size: 1.25rem; font-weight: 600;">
                         {% if client['coverage_amount'] %}
                             ${{ "{:,.0f}".format(client['coverage_amount']) }} HKD
                         {% else %}
@@ -75,112 +57,80 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="text-muted small">Start Date</label>
+                <div class="mb-2">
+                    <div style="color: #6b7280; font-size: 0.75rem;">Start Date</div>
                     <div>{{ client['policy_start_date'] or 'Not specified' }}</div>
                 </div>
-                <div class="mb-3">
-                    <label class="text-muted small">End Date</label>
-                    <div>
-                        {% if client['policy_end_date'] %}
-                            {{ client['policy_end_date'] }}
-                            {% set days_left = ((client['policy_end_date']|string - today_date|string)|int) %}
-                            {% if days_left > 0 %}
-                                <span class="badge bg-success">{{ days_left }} days left</span>
-                            {% elif days_left == 0 %}
-                                <span class="badge bg-warning">Expires today</span>
-                            {% else %}
-                                <span class="badge bg-danger">Expired</span>
-                            {% endif %}
-                        {% else %}
-                            Not specified
-                        {% endif %}
-                    </div>
+                <div>
+                    <div style="color: #6b7280; font-size: 0.75rem;">End Date</div>
+                    <div>{{ client['policy_end_date'] or 'Not specified' }}</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Activity & Notes -->
-    <div class="col-lg-8">
-        <!-- Add Note Form -->
-        <div class="data-card mb-4">
-            <div class="data-card-header">
-                <i class="fas fa-plus-circle me-2"></i> Add Activity / Note
-            </div>
-            <div class="data-card-body">
-                <form action="{{ url_for('add_note', client_id=client['id']) }}" method="POST">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <select name="activity_type" class="form-select form-control-custom">
-                                <option value="Call">Phone Call</option>
-                                <option value="WeChat">WeChat Message</option>
-                                <option value="Email">Email</option>
-                                <option value="Meeting">Meeting</option>
-                                <option value="Follow-up">Follow-up</option>
-                                <option value="Renewal">Renewal Discussion</option>
-                                <option value="Claim">Claim Discussion</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="description" class="form-control form-control-custom" 
-                                   placeholder="Add notes about this interaction..." required>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary-custom text-white w-100">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Activity Log -->
-        <div class="data-card">
-            <div class="data-card-header">
-                <i class="fas fa-history me-2"></i> Activity History
-            </div>
-            <div class="data-card-body">
-                {% for activity in activities %}
-                <div class="activity-item d-flex align-items-start">
-                    <div class="activity-icon {% if activity['activity_type'] == 'Created' %}bg-success{% elif activity['activity_type'] == 'Updated' %}bg-primary{% elif activity['activity_type'] == 'Call' %}bg-info{% elif activity['activity_type'] == 'Meeting' %}bg-warning{% else %}bg-secondary{% endif %}" style="color: white;">
-                        {% if activity['activity_type'] == 'Created' %}
-                            <i class="fas fa-plus"></i>
-                        {% elif activity['activity_type'] == 'Updated' %}
-                            <i class="fas fa-edit"></i>
-                        {% elif activity['activity_type'] == 'Call' %}
-                            <i class="fas fa-phone"></i>
-                        {% elif activity['activity_type'] == 'WeChat' %}
-                            <i class="fab fa-weixin"></i>
-                        {% elif activity['activity_type'] == 'Email' %}
-                            <i class="fas fa-envelope"></i>
-                        {% elif activity['activity_type'] == 'Meeting' %}
-                            <i class="fas fa-handshake"></i>
-                        {% else %}
-                            <i class="fas fa-sticky-note"></i>
-                        {% endif %}
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-500">{{ activity['activity_type'] }}</span>
-                            <span class="activity-time">{{ activity['created_at'][:10] }} {{ activity['created_at'][11:16] }}</span>
-                        </div>
-                        <div class="text-muted">{{ activity['description'] }}</div>
-                    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Activity</div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <div style="color: #6b7280; font-size: 0.75rem;">Added</div>
+                    <div>{{ client['created_at'][:10] }}</div>
                 </div>
-                {% else %}
-                <div class="text-center py-4 text-muted">
-                    No activity recorded yet
+                <div>
+                    <div style="color: #6b7280; font-size: 0.75rem;">Last Updated</div>
+                    <div>{{ client['updated_at'][:10] }}</div>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-{% set today_date = "2026-02-10" %}
+<!-- Add Activity -->
+<div class="card mb-4">
+    <div class="card-header">Add Activity</div>
+    <div class="card-body">
+        <form action="{{ url_for('add_note', client_id=client['id']) }}" method="POST" class="row g-2">
+            <div class="col-4">
+                <select name="activity_type" class="form-control">
+                    <option value="Call">Call</option>
+                    <option value="WeChat">WeChat</option>
+                    <option value="Email">Email</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Follow-up">Follow-up</option>
+                    <option value="Renewal">Renewal</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <input type="text" name="description" class="form-control" placeholder="Add notes..." required>
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Activity History -->
+<div class="card">
+    <div class="card-header">Activity History</div>
+    <div class="card-body">
+        {% for activity in activities %}
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-comment" style="font-size: 0.8rem;"></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 500;">{{ activity['activity_type'] }}</div>
+                <div style="font-size: 0.875rem; color: #374151;">{{ activity['description'] }}</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">{{ activity['created_at'][:10] }} {{ activity['created_at'][11:16] }}</div>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align: center; color: #6b7280; padding: 20px;">No activity recorded yet</div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -3,127 +3,47 @@
 {% block title %}Renewals - FWD Client Manager{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-center">
-    <h1 class="page-title">Renewals</h1>
-    <div class="btn-group">
-        <a href="{{ url_for('renewals', filter='all') }}" class="btn {% if filter_type == 'all' %}btn-primary-custom text-white{% else %}btn-outline-secondary{% endif %}">
-            All
-        </a>
-        <a href="{{ url_for('renewals', filter='30') }}" class="btn {% if filter_type == '30' %}btn-primary-custom text-white{% else %}btn-outline-secondary{% endif %}">
-            30 Days
-        </a>
-        <a href="{{ url_for('renewals', filter='60') }}" class="btn {% if filter_type == '60' %}btn-primary-custom text-white{% else %}btn-outline-secondary{% endif %}">
-            60 Days
-        </a>
-        <a href="{{ url_for('renewals', filter='90') }}" class="btn {% if filter_type == '90' %}btn-primary-custom text-white{% else %}btn-outline-secondary{% endif %}">
-            90 Days
-        </a>
-        <a href="{{ url_for('renewals', filter='expired') }}" class="btn {% if filter_type == 'expired' %}btn-danger text-white{% else %}btn-outline-danger{% endif %}">
-            Expired
-        </a>
+<h1 class="page-title d-flex justify-content-between align-items-center">
+    Renewals
+    <div class="btn-group" style="font-size: 0.875rem;">
+        <a href="{{ url_for('renewals', filter='all') }}" class="btn {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">All</a>
+        <a href="{{ url_for('renewals', filter='30') }}" class="btn {% if filter_type == '30' %}btn-primary{% else %}btn-outline-secondary{% endif %}">30 Days</a>
+        <a href="{{ url_for('renewals', filter='60') }}" class="btn {% if filter_type == '60' %}btn-primary{% else %}btn-outline-secondary{% endif %}">60 Days</a>
+        <a href="{{ url_for('renewals', filter='90') }}" class="btn {% if filter_type == '90' %}btn-primary{% else %}btn-outline-secondary{% endif %}">90 Days</a>
+        <a href="{{ url_for('renewals', filter='expired') }}" class="btn {% if filter_type == 'expired' %}btn-danger{% else %}btn-outline-danger{% endif %}">Expired</a>
     </div>
-</div>
+</h1>
 
-{% if renewals|length > 0 %}
-<div class="row g-4 mb-4">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>
-            {% if filter_type == 'expired' %}
-                Showing {{ renewals|length }} expired/lapsed policies
-            {% else %}
-                Showing {{ renewals|length }} policies expiring {% if filter_type == 'all' %}soon{% elif filter_type == '30' %}within 30 days{% elif filter_type == '60' %}within 60 days{% elif filter_type == '90' %}within 90 days{% endif %}
-            {% endif %}
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<div class="table-card">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Client</th>
-                    <th>Policy Type</th>
-                    <th>Coverage</th>
+                    <th>Name</th>
+                    <th>Policy</th>
                     <th>End Date</th>
-                    <th>Days Left</th>
                     <th>Status</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for renewal in renewals %}
-                {% set days_left = ((renewal['policy_end_date']|string - today_string|string)|int) %}
-                <tr class="{% if days_left <= 0 %}table-danger{% elif days_left <= 7 %}table-warning{% elif days_left <= 30 %}table-info{% endif %}">
+                <tr onclick="window.location.href='{{ url_for('client_detail', client_id=renewal['id']) }}'" style="cursor: pointer;">
                     <td>
-                        <div class="fw-600">{{ renewal['name'] }}</div>
-                        <div class="text-muted small">
-                            {% if renewal['email'] %}{{ renewal['email'] }}{% endif %}
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar">{{ renewal['name'][0] }}</div>
+                            <div>{{ renewal['name'] }}</div>
                         </div>
                     </td>
-                    <td>
-                        {% if renewal['policy_type'] %}
-                            <span class="badge bg-light text-dark">{{ renewal['policy_type'] }}</span>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if renewal['coverage_amount'] %}
-                            ${{ "{:,.0f}".format(renewal['coverage_amount']) }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
+                    <td>{{ renewal['policy_type'] or '-' }}</td>
                     <td>{{ renewal['policy_end_date'] }}</td>
                     <td>
-                        {% if days_left > 0 %}
-                            {{ days_left }} days
-                        {% elif days_left == 0 %}
-                            Today
-                        {% else %}
-                            {{ -days_left }} days ago
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="badge badge-status badge-{{ renewal['status']|lower }}">
-                            {{ renewal['status'] }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('client_detail', client_id=renewal['id']) }}" 
-                               class="btn btn-outline-primary" title="View">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ url_for('edit_client', client_id=renewal['id']) }}" 
-                               class="btn btn-outline-secondary" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            {% if days_left <= 30 and renewal['status'] == 'Active' %}
-                            <button class="btn btn-outline-success" title="Send Renewal Reminder">
-                                <i class="fas fa-bell"></i>
-                            </button>
-                            {% endif %}
-                        </div>
+                        <span class="badge-status badge-{{ renewal['status']|lower }}">{{ renewal['status'] }}</span>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-5">
-                        <div class="text-muted mb-3">
-                            <i class="fas fa-calendar-check" style="font-size: 3rem; opacity: 0.3;"></i>
-                        </div>
-                        <h5 class="text-muted">No renewals found</h5>
-                        <p class="text-muted">
-                            {% if filter_type == 'expired' %}
-                                No expired policies found
-                            {% else %}
-                                No policies expiring in this period
-                            {% endif %}
-                        </p>
+                    <td colspan="4" class="text-center py-5" style="color: #6b7280;">
+                        No renewals found
                     </td>
                 </tr>
                 {% endfor %}
@@ -131,8 +51,4 @@
         </table>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-{% set today_string = "2026-02-10" %}
 {% endblock %}

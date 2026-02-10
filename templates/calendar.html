@@ -3,161 +3,43 @@
 {% block title %}Calendar - FWD Client Manager{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title">Policy Renewal Calendar</h1>
-</div>
+<h1 class="page-title">Calendar</h1>
 
-<div class="row g-4">
-    <div class="col-lg-9">
-        <div class="data-card">
-            <div class="data-card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-calendar me-2"></i> Upcoming Renewals</span>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-secondary" onclick="changeMonth(-1)">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary" onclick="changeMonth(1)">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="data-card-body">
-                <div id="calendar" class="calendar-container">
-                    <!-- Calendar will be rendered here -->
-                    <p class="text-center text-muted py-5">Loading calendar...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3">
-        <div class="data-card mb-4">
-            <div class="data-card-header">
-                <i class="fas fa-legend me-2"></i> Legend
-            </div>
-            <div class="data-card-body">
-                <div class="d-flex align-items-center mb-2">
-                    <div class="legend-dot bg-success me-2"></div>
-                    <span>More than 30 days</span>
-                </div>
-                <div class="d-flex align-items-center mb-2">
-                    <div class="legend-dot bg-warning me-2"></div>
-                    <span>Within 30 days</span>
-                </div>
-                <div class="d-flex align-items-center mb-2">
-                    <div class="legend-dot bg-danger me-2"></div>
-                    <span>Expired/Expiring soon</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="data-card">
-            <div class="data-card-header">
-                <i class="fas fa-bell me-2"></i> This Month
-            </div>
-            <div class="data-card-body" id="monthly-renewals">
-                <p class="text-muted text-center py-3">Loading...</p>
-            </div>
-        </div>
+<div class="card">
+    <div class="card-body">
+        <div id="calendar"></div>
     </div>
 </div>
 
 <style>
-.calendar-container {
-    min-height: 400px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
-    background: #e9ecef;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.calendar-header {
-    background: #f8f9fa;
-    padding: 0.75rem;
-    text-align: center;
-    font-weight: 600;
-    color: #6c757d;
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.calendar-header { 
+    background: #f9fafb; 
+    padding: 8px; 
+    text-align: center; 
+    font-weight: 600; 
+    color: #6b7280; 
     font-size: 0.75rem;
-    text-transform: uppercase;
 }
-
 .calendar-day {
+    min-height: 60px;
+    padding: 8px;
     background: white;
-    min-height: 80px;
-    padding: 0.5rem;
+    border: 1px solid #f0f0f0;
 }
-
-.calendar-day.other-month {
-    background: #f8f9fa;
-    color: #adb5bd;
-}
-
-.calendar-day.today {
-    background: rgba(0,102,204,0.05);
-}
-
-.day-number {
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-}
-
-.today .day-number {
-    background: var(--primary-color);
-    color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.event-item {
-    font-size: 0.7rem;
-    padding: 2px 4px;
-    border-radius: 4px;
-    margin-bottom: 2px;
+.calendar-day.other { background: #f9fafb; color: #9ca3af; }
+.calendar-day.today { background: #dbeafe; }
+.day-number { font-weight: 600; margin-bottom: 4px; }
+.event { 
+    font-size: 0.65rem; 
+    padding: 2px 4px; 
+    border-radius: 4px; 
+    margin-top: 2px;
     cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
-
-.event-item:hover {
-    opacity: 0.9;
-}
-
-.event-safe {
-    background: rgba(25,135,84,0.2);
-    color: var(--success-color);
-}
-
-.event-warning {
-    background: rgba(255,193,7,0.3);
-    color: #997404;
-}
-
-.event-danger {
-    background: rgba(220,53,69,0.2);
-    color: var(--danger-color);
-}
-
-.legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.month-nav {
-    font-size: 1rem;
-    font-weight: 600;
-}
+.event.safe { background: #dcfce7; color: #22c55e; }
+.event.warning { background: #fef3c7; color: #f59e0b; }
+.event.danger { background: #fee2e2; color: #ef4444; }
 </style>
 
 <script>
@@ -176,25 +58,27 @@ async function loadEvents() {
 }
 
 function renderCalendar() {
-    const container = document.getElementById('calendar');
-    const monthlyContainer = document.getElementById('monthly-renewals');
-    
+    const calendar = document.getElementById('calendar');
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                        'July', 'August', 'September', 'October', 'November', 'December'];
     
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const today = new Date();
+    
     let html = `
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">${monthNames[month]} ${year}</h5>
+            <button onclick="changeMonth(-1)" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h5 class="m-0">${monthNames[month]} ${year}</h5>
+            <button onclick="changeMonth(1)" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
-        <div class="calendar-grid">
+        <div class="calendar">
             <div class="calendar-header">Sun</div>
             <div class="calendar-header">Mon</div>
             <div class="calendar-header">Tue</div>
@@ -204,69 +88,38 @@ function renderCalendar() {
             <div class="calendar-header">Sat</div>
     `;
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Padding days
+    for (let i = 0; i < firstDay.getDay(); i++) {
+        html += `<div class="calendar-day other"></div>`;
+    }
     
-    let currentDateIter = new Date(startDate);
-    const monthlyRenewals = [];
-    
-    for (let i = 0; i < 42; i++) {
-        const isOtherMonth = currentDateIter.getMonth() !== month;
-        const isToday = currentDateIter.getTime() === today.getTime();
+    // Days
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+        const dayEvents = events.filter(e => e.date === dateStr);
         
-        html += `<div class="calendar-day ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}">`;
-        
-        if (!isOtherMonth) {
-            html += `<div class="day-number">${currentDateIter.getDate()}</div>`;
+        let eventHtml = '';
+        dayEvents.forEach(event => {
+            let eventClass = 'safe';
+            const eventDate = new Date(event.date);
+            const daysDiff = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+            if (daysDiff <= 0) eventClass = 'danger';
+            else if (daysDiff <= 30) eventClass = 'warning';
             
-            const dateStr = currentDateIter.toISOString().split('T')[0];
-            const dayEvents = events.filter(e => e.date === dateStr);
-            
-            dayEvents.forEach(event => {
-                let eventClass = 'event-safe';
-                const eventDate = new Date(event.date);
-                const daysDiff = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-                
-                if (daysDiff <= 0) eventClass = 'event-danger';
-                else if (daysDiff <= 30) eventClass = 'event-warning';
-                
-                html += `<div class="event-item ${eventClass}" 
-                              onclick="window.location.href='/client/${event.id}'"
-                              title="${event.name} - ${event.policy_type || 'No policy'}">
-                            ${event.name}
-                         </div>`;
-                
-                if (eventDate.getMonth() === month) {
-                    monthlyRenewals.push(event);
-                }
-            });
-        }
+            eventHtml += `<div class="event ${eventClass}" onclick="window.location.href='/client/${event.id}'">${event.name}</div>`;
+        });
         
-        html += '</div>';
-        currentDateIter.setDate(currentDateIter.getDate() + 1);
-        
-        if (i >= 41 && currentDateIter.getDay() === 1) break;
+        html += `
+            <div class="calendar-day ${isToday ? 'today' : ''}">
+                <div class="day-number">${day}</div>
+                ${eventHtml}
+            </div>
+        `;
     }
     
     html += '</div>';
-    container.innerHTML = html;
-    
-    // Render monthly renewals sidebar
-    if (monthlyRenewals.length > 0) {
-        monthlyContainer.innerHTML = monthlyRenewals.map(event => `
-            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                <div>
-                    <div class="fw-500">${event.name}</div>
-                    <div class="small text-muted">${event.policy_type || 'No policy'}</div>
-                </div>
-                <a href="/client/${event.id}" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-eye"></i>
-                </a>
-            </div>
-        `).join('');
-    } else {
-        monthlyContainer.innerHTML = '<p class="text-center text-muted py-3">No renewals this month</p>';
-    }
+    calendar.innerHTML = html;
 }
 
 function changeMonth(delta) {
@@ -274,6 +127,6 @@ function changeMonth(delta) {
     renderCalendar();
 }
 
-document.addEventListener('DOMContentLoaded', loadEvents);
+loadEvents();
 </script>
 {% endblock %}

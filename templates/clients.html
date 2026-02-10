@@ -3,20 +3,20 @@
 {% block title %}Clients - FWD Client Manager{% endblock %}
 
 {% block content %}
-<div class="page-title d-flex justify-content-between align-items-center">
-    <span>Clients</span>
-    <a href="{{ url_for('add_client') }}" class="btn btn-primary-custom" style="padding: 8px 16px; font-size: 0.875rem;">
-        <i class="fas fa-plus"></i> Add
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="page-title" style="margin: 0;">Clients</h1>
+    <a href="{{ url_for('add_client') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add Client
     </a>
 </div>
 
 <!-- Search -->
-<div class="data-card mb-3">
-    <div class="data-card-body">
-        <form action="{{ url_for('search') }}" method="GET" style="display: flex; gap: 10px;">
-            <input type="text" name="q" class="form-control-custom" placeholder="Search name, email, phone..." 
-                   value="{{ search_query or '' }}" style="flex: 1;">
-            <button type="submit" class="btn btn-primary-custom">
+<div class="card mb-3">
+    <div class="card-body">
+        <form action="{{ url_for('search') }}" method="GET" class="search-box">
+            <input type="text" name="q" class="form-control" placeholder="Search name, email, phone, WeChat..." 
+                   value="{{ search_query or '' }}">
+            <button type="submit" class="btn btn-primary">
                 <i class="fas fa-search"></i>
             </button>
         </form>
@@ -24,27 +24,28 @@
 </div>
 
 <!-- Clients Table -->
-<div class="data-card">
-    <div class="data-card-body" style="padding: 0;">
-        <table>
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Client</th>
+                    <th>Name</th>
                     <th>Contact</th>
+                    <th>Policy</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for client in clients %}
-                <tr onclick="window.location.href='{{ url_for('client_detail', client_id=client['id']) }}'">
+                <tr onclick="window.location.href='{{ url_for('client_detail', client_id=client['id']) }}'" style="cursor: pointer;">
                     <td>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="client-avatar">
-                                {{ client['name'][0] }}
-                            </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="avatar">{{ client['name'][0] }}</div>
                             <div>
                                 <div style="font-weight: 500;">{{ client['name'] }}</div>
-                                <div style="font-size: 0.75rem; color: #6b7280;">{{ client['policy_type'] or 'No policy' }}</div>
+                                {% if client['email'] %}
+                                <div style="font-size: 0.75rem; color: #6b7280;">{{ client['email'] }}</div>
+                                {% endif %}
                             </div>
                         </div>
                     </td>
@@ -59,14 +60,24 @@
                         </div>
                     </td>
                     <td>
-                        <span class="badge-status badge-{{ client['status']|lower }}">
-                            {{ client['status'] }}
-                        </span>
+                        {% if client['policy_type'] %}
+                            <div style="font-size: 0.875rem;">{{ client['policy_type'] }}</div>
+                            {% if client['coverage_amount'] %}
+                            <div style="font-size: 0.75rem; color: #6b7280;">
+                                ${{ "{:,.0f}".format(client['coverage_amount']) }}
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge-status badge-{{ client['status']|lower }}">{{ client['status'] }}</span>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="3" class="text-center py-5" style="color: #6b7280;">
+                    <td colspan="4" class="text-center py-5" style="color: #6b7280;">
                         {% if search_query %}
                             No results for "{{ search_query }}"
                         {% else %}
@@ -79,23 +90,4 @@
         </table>
     </div>
 </div>
-
-<!-- Pagination -->
-{% if clients|length > 0 %}
-<nav class="mt-4">
-    <ul class="pagination justify-content-center" style="gap: 4px;">
-        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-    </ul>
-</nav>
-{% endif %}
-{% endblock %}
-
-{% block scripts %}
-<script>
-document.querySelectorAll('tbody tr').forEach(row => {
-    row.style.cursor = 'pointer';
-});
-</script>
 {% endblock %}

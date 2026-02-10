@@ -1,98 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}{{ action }} Client - FWD Client Manager{% endblock %}
+{% block title %}Add Client - FWD Client Manager{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title">{{ action }} Client</h1>
-</div>
+<h1 class="page-title">{{ action }} Client</h1>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="data-card">
-            <div class="data-card-body">
-                <form method="POST">
-                    <!-- Basic Info -->
-                    <h5 class="mb-3">Basic Information</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Full Name *</label>
-                            <input type="text" name="name" class="form-control form-control-custom" 
-                                   value="{{ client['name'] if client else '' }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Email</label>
-                            <input type="email" name="email" class="form-control form-control-custom" 
-                                   value="{{ client['email'] if client else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Phone</label>
-                            <input type="text" name="phone" class="form-control form-control-custom" 
-                                   value="{{ client['phone'] if client else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">WeChat ID</label>
-                            <input type="text" name="wechat" class="form-control form-control-custom" 
-                                   value="{{ client['wechat'] if client else '' }}">
-                        </div>
-                    </div>
-                    
-                    <!-- Policy Info -->
-                    <h5 class="mb-3">Policy Information</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Policy Type</label>
-                            <select name="policy_type" class="form-select form-control-custom">
-                                <option value="">Select type...</option>
-                                <option value="Life Insurance" {% if client and client['policy_type'] == 'Life Insurance' %}selected{% endif %}>Life Insurance</option>
-                                <option value="Health Insurance" {% if client and client['policy_type'] == 'Health Insurance' %}selected{% endif %}>Health Insurance</option>
-                                <option value="Critical Illness" {% if client and client['policy_type'] == 'Critical Illness' %}selected{% endif %}>Critical Illness</option>
-                                <option value="Accident Insurance" {% if client and client['policy_type'] == 'Accident Insurance' %}selected{% endif %}>Accident Insurance</option>
-                                <option value="Investment Linked" {% if client and client['policy_type'] == 'Investment Linked' %}selected{% endif %}>Investment Linked</option>
-                                <option value="General Insurance" {% if client and client['policy_type'] == 'General Insurance' %}selected{% endif %}>General Insurance</option>
-                                <option value="Travel Insurance" {% if client and client['policy_type'] == 'Travel Insurance' %}selected{% endif %}>Travel Insurance</option>
-                                <option value="Other" {% if client and client['policy_type'] == 'Other' %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Coverage Amount (HKD)</label>
-                            <input type="number" name="coverage_amount" class="form-control form-control-custom" 
-                                   value="{{ client['coverage_amount'] if client else '' }}" step="0.01">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Policy Start Date</label>
-                            <input type="date" name="policy_start_date" class="form-control form-control-custom" 
-                                   value="{{ client['policy_start_date'] if client else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Policy End Date</label>
-                            <input type="date" name="policy_end_date" class="form-control form-control-custom" 
-                                   value="{{ client['policy_end_date'] if client else '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-custom">Status</label>
-                            <select name="status" class="form-select form-control-custom">
-                                <option value="Active" {% if client and client['status'] == 'Active' %}selected{% endif %}>Active</option>
-                                <option value="Expired" {% if client and client['status'] == 'Expired' %}selected{% endif %}>Expired</option>
-                                <option value="Pending" {% if client and client['status'] == 'Pending' %}selected{% endif %}>Pending</option>
-                                <option value="Lapsed" {% if client and client['status'] == 'Lapsed' %}selected{% endif %}>Lapsed</option>
-                                <option value="Cancelled" {% if client and client['status'] == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Actions -->
-                    <div class="d-flex gap-3">
-                        <button type="submit" class="btn btn-primary-custom text-white px-4">
-                            <i class="fas fa-save me-2"></i> Save Client
-                        </button>
-                        <a href="{{ url_for('clients') }}" class="btn btn-outline-secondary px-4">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <h5 class="mb-3">Basic Information</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ client['name'] if client else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ client['email'] if client else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ client['phone'] if client else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">WeChat ID</label>
+                    <input type="text" name="wechat" class="form-control" value="{{ client['wechat'] if client else '' }}">
+                </div>
             </div>
-        </div>
+            
+            <h5 class="mb-3">Policy Information</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Policy Type</label>
+                    <select name="policy_type" class="form-control">
+                        <option value="">Select type...</option>
+                        <option value="Life Insurance" {% if client and client['policy_type'] == 'Life Insurance' %}selected{% endif %}>Life Insurance</option>
+                        <option value="Health Insurance" {% if client and client['policy_type'] == 'Health Insurance' %}selected{% endif %}>Health Insurance</option>
+                        <option value="Critical Illness" {% if client and client['policy_type'] == 'Critical Illness' %}selected{% endif %}>Critical Illness</option>
+                        <option value="Accident Insurance" {% if client and client['policy_type'] == 'Accident Insurance' %}selected{% endif %}>Accident Insurance</option>
+                        <option value="Investment Linked" {% if client and client['policy_type'] == 'Investment Linked' %}selected{% endif %}>Investment Linked</option>
+                        <option value="General Insurance" {% if client and client['policy_type'] == 'General Insurance' %}selected{% endif %}>General Insurance</option>
+                        <option value="Travel Insurance" {% if client and client['policy_type'] == 'Travel Insurance' %}selected{% endif %}>Travel Insurance</option>
+                        <option value="Other" {% if client and client['policy_type'] == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Coverage Amount (HKD)</label>
+                    <input type="number" name="coverage_amount" class="form-control" value="{{ client['coverage_amount'] if client else '' }}" step="0.01">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Policy Start Date</label>
+                    <input type="date" name="policy_start_date" class="form-control" value="{{ client['policy_start_date'] if client else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Policy End Date</label>
+                    <input type="date" name="policy_end_date" class="form-control" value="{{ client['policy_end_date'] if client else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="Active" {% if client and client['status'] == 'Active' %}selected{% endif %}>Active</option>
+                        <option value="Expired" {% if client and client['status'] == 'Expired' %}selected{% endif %}>Expired</option>
+                        <option value="Pending" {% if client and client['status'] == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Lapsed" {% if client and client['status'] == 'Lapsed' %}selected{% endif %}>Lapsed</option>
+                        <option value="Cancelled" {% if client and client['status'] == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Client
+                </button>
+                <a href="{{ url_for('clients') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
