@@ -1,26 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Renewals - FWD Client Manager{% endblock %}
+{% block header_title %}Renewals{% endblock %}
 
 {% block content %}
-<h1 class="page-title d-flex justify-content-between align-items-center">
-    Renewals
-    <div class="btn-group" style="font-size: 0.875rem;">
-        <a href="{{ url_for('renewals', filter='all') }}" class="btn {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">All</a>
-        <a href="{{ url_for('renewals', filter='30') }}" class="btn {% if filter_type == '30' %}btn-primary{% else %}btn-outline-secondary{% endif %}">30 Days</a>
-        <a href="{{ url_for('renewals', filter='60') }}" class="btn {% if filter_type == '60' %}btn-primary{% else %}btn-outline-secondary{% endif %}">60 Days</a>
-        <a href="{{ url_for('renewals', filter='90') }}" class="btn {% if filter_type == '90' %}btn-primary{% else %}btn-outline-secondary{% endif %}">90 Days</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="btn-group">
+        <a href="{{ url_for('renewals', filter='all') }}" class="btn {% if filter_type == 'all' %}btn-primary-custom{% else %}btn-outline-secondary{% endif %}">All</a>
+        <a href="{{ url_for('renewals', filter='30') }}" class="btn {% if filter_type == '30' %}btn-primary-custom{% else %}btn-outline-secondary{% endif %}">30 Days</a>
+        <a href="{{ url_for('renewals', filter='60') }}" class="btn {% if filter_type == '60' %}btn-primary-custom{% else %}btn-outline-secondary{% endif %}">60 Days</a>
+        <a href="{{ url_for('renewals', filter='90') }}" class="btn {% if filter_type == '90' %}btn-primary-custom{% else %}btn-outline-secondary{% endif %}">90 Days</a>
         <a href="{{ url_for('renewals', filter='expired') }}" class="btn {% if filter_type == 'expired' %}btn-danger{% else %}btn-outline-danger{% endif %}">Expired</a>
     </div>
-</h1>
+</div>
 
-<div class="card">
-    <div class="card-body" style="padding: 0;">
-        <table class="table">
+<div class="data-card">
+    <div class="data-card-header">
+        <h5 class="data-card-title">Policy Renewals</h5>
+    </div>
+    <div class="data-card-body">
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Policy</th>
+                    <th>Policy Type</th>
                     <th>End Date</th>
                     <th>Status</th>
                 </tr>
@@ -29,9 +31,9 @@
                 {% for renewal in renewals %}
                 <tr onclick="window.location.href='{{ url_for('client_detail', client_id=renewal['id']) }}'" style="cursor: pointer;">
                     <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="avatar">{{ renewal['name'][0] }}</div>
-                            <div>{{ renewal['name'] }}</div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="client-avatar">{{ renewal['name'][0] }}</div>
+                            <div style="font-weight: 500;">{{ renewal['name'] }}</div>
                         </div>
                     </td>
                     <td>{{ renewal['policy_type'] or '-' }}</td>

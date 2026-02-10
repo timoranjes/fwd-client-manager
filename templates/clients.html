@@ -1,32 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Clients - FWD Client Manager{% endblock %}
+{% block header_title %}Clients{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="page-title" style="margin: 0;">Clients</h1>
-    <a href="{{ url_for('add_client') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Add Client
-    </a>
-</div>
-
 <!-- Search -->
-<div class="card mb-3">
-    <div class="card-body">
-        <form action="{{ url_for('search') }}" method="GET" class="search-box">
-            <input type="text" name="q" class="form-control" placeholder="Search name, email, phone, WeChat..." 
-                   value="{{ search_query or '' }}">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-search"></i>
+<div class="data-card mb-4">
+    <div class="data-card-body">
+        <form action="{{ url_for('search') }}" method="GET" style="display: flex; gap: 12px;">
+            <input type="text" name="q" class="form-control-custom" placeholder="Search by name, email, phone, WeChat..." 
+                   value="{{ search_query or '' }}" style="flex: 1;">
+            <button type="submit" class="btn btn-primary-custom">
+                <i class="fas fa-search me-2"></i>Search
             </button>
         </form>
     </div>
 </div>
 
 <!-- Clients Table -->
-<div class="card">
-    <div class="card-body" style="padding: 0;">
-        <table class="table">
+<div class="data-card">
+    <div class="data-card-header">
+        <h5 class="data-card-title">All Clients</h5>
+        <a href="{{ url_for('add_client') }}" class="btn btn-primary-custom btn-sm">
+            <i class="fas fa-plus me-2"></i>Add Client
+        </a>
+    </div>
+    <div class="data-card-body">
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -39,36 +38,41 @@
                 {% for client in clients %}
                 <tr onclick="window.location.href='{{ url_for('client_detail', client_id=client['id']) }}'" style="cursor: pointer;">
                     <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="avatar">{{ client['name'][0] }}</div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="client-avatar">{{ client['name'][0] }}</div>
                             <div>
-                                <div style="font-weight: 500;">{{ client['name'] }}</div>
-                                {% if client['email'] %}
-                                <div style="font-size: 0.75rem; color: #6b7280;">{{ client['email'] }}</div>
-                                {% endif %}
+                                <div style="font-weight: 500; color: #1a1a2e;">{{ client['name'] }}</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{ client['email'] or 'No email' }}</div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <div style="font-size: 0.8rem;">
+                        <div style="font-size: 0.875rem;">
                             {% if client['phone'] %}
-                                <div><i class="fas fa-phone" style="color: #9ca3af; width: 14px;"></i> {{ client['phone'] }}</div>
+                                <div style="margin-bottom: 4px;">
+                                    <i class="fas fa-phone me-2" style="color: #9ca3af; width: 14px;"></i>{{ client['phone'] }}
+                                </div>
                             {% endif %}
                             {% if client['wechat'] %}
-                                <div><i class="fab fa-weixin" style="color: #9ca3af; width: 14px;"></i> {{ client['wechat'] }}</div>
+                                <div>
+                                    <i class="fab fa-weixin me-2" style="color: #9ca3af; width: 14px;"></i>{{ client['wechat'] }}
+                                </div>
+                            {% endif %}
+                            {% if not client['phone'] and not client['wechat'] %}
+                                <span style="ca3af;">color: #9No contact</span>
                             {% endif %}
                         </div>
                     </td>
                     <td>
                         {% if client['policy_type'] %}
-                            <div style="font-size: 0.875rem;">{{ client['policy_type'] }}</div>
+                            <div style="font-weight: 500;">{{ client['policy_type'] }}</div>
                             {% if client['coverage_amount'] %}
-                            <div style="font-size: 0.75rem; color: #6b7280;">
+                            <div style="font-size: 0.8rem; color: #6b7280;">
                                 ${{ "{:,.0f}".format(client['coverage_amount']) }}
                             </div>
                             {% endif %}
                         {% else %}
-                            -
+                            <span style="color: #9ca3af;">No policy</span>
                         {% endif %}
                     </td>
                     <td>

@@ -1,45 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - FWD Client Manager{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Dashboard</h1>
-
 <!-- Stats Row -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-            <div>
-                <div class="stat-value">{{ total_clients }}</div>
-                <div class="stat-label">Total Clients</div>
+            <div class="stat-info">
+                <h3>{{ total_clients }}</h3>
+                <p>Total Clients</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-            <div>
-                <div class="stat-value">{{ active_policies }}</div>
-                <div class="stat-label">Active</div>
+            <div class="stat-info">
+                <h3>{{ active_policies }}</h3>
+                <p>Active Policies</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
-            <div>
-                <div class="stat-value">{{ upcoming_renewals }}</div>
-                <div class="stat-label">Renewals</div>
+            <div class="stat-info">
+                <h3>{{ upcoming_renewals }}</h3>
+                <p>Upcoming Renewals</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon red"><i class="fas fa-exclamation-circle"></i></div>
-            <div>
-                <div class="stat-value">{{ expired_policies }}</div>
-                <div class="stat-label">Expired</div>
+            <div class="stat-info">
+                <h3>{{ expired_policies }}</h3>
+                <p>Expired Policies</p>
             </div>
         </div>
     </div>
@@ -47,36 +45,36 @@
 
 <!-- Quick Actions -->
 <div class="quick-actions">
-    <a href="{{ url_for('add_client') }}" class="quick-btn">
+    <a href="{{ url_for('add_client') }}" class="quick-action-btn">
         <i class="fas fa-user-plus"></i>
         <span>Add Client</span>
     </a>
-    <a href="{{ url_for('renewals', filter='30') }}" class="quick-btn">
+    <a href="{{ url_for('renewals', filter='30') }}" class="quick-action-btn">
         <i class="fas fa-calendar-check"></i>
-        <span>Renewals</span>
+        <span>View Renewals</span>
     </a>
-    <a href="{{ url_for('clients') }}" class="quick-btn">
+    <a href="{{ url_for('clients') }}" class="quick-action-btn">
         <i class="fas fa-search"></i>
-        <span>Search</span>
+        <span>Search Clients</span>
     </a>
-    <a href="{{ url_for('export') }}" class="quick-btn">
-        <i class="fas fa-download"></i>
-        <span>Export</span>
+    <a href="{{ url_for('reports') }}" class="quick-action-btn">
+        <i class="fas fa-chart-pie"></i>
+        <span>Reports</span>
     </a>
 </div>
 
 <!-- Recent Clients -->
-<div class="card">
-    <div class="card-header">
-        <span>Recent Clients</span>
+<div class="data-card mb-4">
+    <div class="data-card-header">
+        <h5 class="data-card-title">Recent Clients</h5>
         <a href="{{ url_for('clients') }}" class="btn btn-outline-secondary btn-sm">View All</a>
     </div>
-    <div class="card-body" style="padding: 0;">
-        <table class="table">
+    <div class="data-card-body">
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Policy</th>
+                    <th>Policy Type</th>
                     <th>Coverage</th>
                     <th>Status</th>
                 </tr>
@@ -85,9 +83,12 @@
                 {% for client in recent_clients %}
                 <tr onclick="window.location.href='{{ url_for('client_detail', client_id=client['id']) }}'" style="cursor: pointer;">
                     <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="avatar">{{ client['name'][0] }}</div>
-                            <div>{{ client['name'] }}</div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="client-avatar">{{ client['name'][0] }}</div>
+                            <div>
+                                <div style="font-weight: 500; color: #1a1a2e;">{{ client['name'] }}</div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{ client['email'] or 'No email' }}</div>
+                            </div>
                         </div>
                     </td>
                     <td>{{ client['policy_type'] or '-' }}</td>
@@ -104,7 +105,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="4" class="text-center py-4" style="color: #6b7280;">
+                    <td colspan="4" class="text-center py-5" style="color: #6b7280;">
                         No clients yet. <a href="{{ url_for('add_client') }}">Add your first client</a>
                     </td>
                 </tr>
@@ -115,22 +116,26 @@
 </div>
 
 <!-- Recent Activity -->
-<div class="card">
-    <div class="card-header">Recent Activity</div>
-    <div class="card-body">
+<div class="data-card">
+    <div class="data-card-header">
+        <h5 class="data-card-title">Recent Activity</h5>
+    </div>
+    <div class="data-card-body" style="padding: 20px 24px;">
         {% for activity in recent_activities %}
         <div class="activity-item">
-            <div class="activity-icon" style="background: #dbeafe; color: #3b82f6;">
-                <i class="fas fa-user-plus" style="font-size: 0.8rem;"></i>
+            <div class="activity-icon blue">
+                <i class="fas fa-user-plus" style="font-size: 0.9rem;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-weight: 500;">{{ activity['client_name'] or 'System' }}</div>
-                <div style="font-size: 0.8rem; color: #6b7280;">{{ activity['description'] }}</div>
-                <div style="font-size: 0.75rem; color: #9ca3af;">{{ activity['created_at'][:10] }}</div>
+            <div>
+                <div style="font-weight: 500; color: #1a1a2e;">{{ activity['client_name'] or 'System' }}</div>
+                <div style="font-size: 0.875rem; color: #6b7280;">{{ activity['description'] }}</div>
+                <div style="font-size: 0.75rem; color: #9ca3af; margin-top: 4px;">{{ activity['created_at'][:10] }}</div>
             </div>
         </div>
         {% else %}
-        <div style="text-align: center; color: #6b7280; padding: 20px;">No activity yet</div>
+        <div style="text-align: center; padding: 30px; color: #6b7280;">
+            No activity yet
+        </div>
         {% endfor %}
     </div>
 </div>

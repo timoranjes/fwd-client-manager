@@ -1,45 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}Calendar - FWD Client Manager{% endblock %}
+{% block header_title %}Calendar{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Calendar</h1>
-
-<div class="card">
-    <div class="card-body">
+<div class="data-card">
+    <div class="data-card-body">
         <div id="calendar"></div>
     </div>
 </div>
 
 <style>
-.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-top: 20px; }
 .calendar-header { 
     background: #f9fafb; 
-    padding: 8px; 
+    padding: 12px; 
     text-align: center; 
     font-weight: 600; 
     color: #6b7280; 
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 }
 .calendar-day {
-    min-height: 60px;
-    padding: 8px;
+    min-height: 80px;
+    padding: 10px;
     background: white;
     border: 1px solid #f0f0f0;
+    border-radius: 8px;
 }
 .calendar-day.other { background: #f9fafb; color: #9ca3af; }
-.calendar-day.today { background: #dbeafe; }
-.day-number { font-weight: 600; margin-bottom: 4px; }
+.calendar-day.today { background: #dbeafe; border-color: #0066cc; }
+.day-number { font-weight: 600; margin-bottom: 8px; color: #1a1a2e; }
 .event { 
-    font-size: 0.65rem; 
-    padding: 2px 4px; 
+    font-size: 0.7rem; 
+    padding: 3px 8px; 
     border-radius: 4px; 
-    margin-top: 2px;
+    margin-top: 4px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.event.safe { background: #dcfce7; color: #22c55e; }
-.event.warning { background: #fef3c7; color: #f59e0b; }
-.event.danger { background: #fee2e2; color: #ef4444; }
+.event.safe { background: #dcfce7; color: #16a34a; }
+.event.warning { background: #fef3c7; color: #d97706; }
+.event.danger { background: #fee2e2; color: #dc2626; }
 </style>
 
 <script>
@@ -71,11 +73,11 @@ function renderCalendar() {
     let html = `
         <div class="d-flex justify-content-between align-items-center mb-3">
             <button onclick="changeMonth(-1)" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-chevron-left"></i>
+                <i class="fas fa-chevron-left"></i> Previous
             </button>
-            <h5 class="m-0">${monthNames[month]} ${year}</h5>
+            <h4 class="m-0" style="font-weight: 600; color: #1a1a2e;">${monthNames[month]} ${year}</h4>
             <button onclick="changeMonth(1)" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-chevron-right"></i>
+                Next <i class="fas fa-chevron-right"></i>
             </button>
         </div>
         <div class="calendar">
@@ -88,12 +90,10 @@ function renderCalendar() {
             <div class="calendar-header">Sat</div>
     `;
     
-    // Padding days
     for (let i = 0; i < firstDay.getDay(); i++) {
         html += `<div class="calendar-day other"></div>`;
     }
     
-    // Days
     for (let day = 1; day <= lastDay.getDate(); day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;

@@ -1,72 +1,72 @@
 {% extends "base.html" %}
 
-{% block title %}Reports - FWD Client Manager{% endblock %}
+{% block header_title %}Reports{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Reports</h1>
-
 <!-- Stats -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-            <div>
-                <div class="stat-value">{{ policy_breakdown|sum(attribute='count') }}</div>
-                <div class="stat-label">Total Clients</div>
+            <div class="stat-info">
+                <h3>{{ policy_breakdown|sum(attribute='count') }}</h3>
+                <p>Total Clients</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div>
-            <div>
-                <div class="stat-value">
+            <div class="stat-info">
+                <h3>
                     {% set total_coverage = policy_breakdown|sum(attribute='total') or 0 %}
-                    ${{ "{:,.0f}".format(total_coverage)[:8] }}
-                </div>
-                <div class="stat-label">Total Coverage</div>
+                    ${{ "{:,.0f}".format(total_coverage)[:10] }}
+                </h3>
+                <p>Total Coverage</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="stat-icon yellow"><i class="fas fa-file-contract"></i></div>
-            <div>
-                <div class="stat-value">{{ policy_breakdown|length }}</div>
-                <div class="stat-label">Policy Types</div>
+            <div class="stat-info">
+                <h3>{{ policy_breakdown|length }}</h3>
+                <p>Policy Types</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-md-3">
         <div class="stat-card">
-            <div class="stat-icon red"><i class="fas fa-chart-line"></i></div>
-            <div>
-                <div class="stat-value">{{ status_breakdown|selectattr('status', 'equalto', 'Active')|list|length or 0 }}</div>
-                <div class="stat-label">Active</div>
+            <div class="stat-icon red"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <h3>{{ status_breakdown|selectattr('status', 'equalto', 'Active')|list|length or 0 }}</h3>
+                <p>Active Policies</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-3">
+<div class="row g-4">
     <!-- Policy Breakdown -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Policy Types</div>
-            <div class="card-body">
+        <div class="data-card" style="height: 100%;">
+            <div class="data-card-header">
+                <h5 class="data-card-title">Policy Types</h5>
+            </div>
+            <div class="data-card-body">
                 {% if policy_breakdown %}
-                <table class="table" style="font-size: 0.875rem;">
+                <table class="custom-table">
                     <thead>
                         <tr>
                             <th>Type</th>
                             <th>Count</th>
-                            <th>Coverage</th>
+                            <th>Total Coverage</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for policy in policy_breakdown %}
                         <tr>
-                            <td>{{ policy['policy_type'] }}</td>
+                            <td style="font-weight: 500;">{{ policy['policy_type'] }}</td>
                             <td>{{ policy['count'] }}</td>
                             <td>${{ "{:,.0f}".format(policy['total'] or 0) }}</td>
                         </tr>
@@ -74,7 +74,7 @@
                     </tbody>
                 </table>
                 {% else %}
-                <div style="text-align: center; color: #6b7280; padding: 20px;">No data available</div>
+                <div style="text-align: center; padding: 40px; color: #6b7280;">No data available</div>
                 {% endif %}
             </div>
         </div>
@@ -82,24 +82,26 @@
     
     <!-- Status Breakdown -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Status Overview</div>
-            <div class="card-body">
+        <div class="data-card" style="height: 100%;">
+            <div class="data-card-header">
+                <h5 class="data-card-title">Status Overview</h5>
+            </div>
+            <div class="data-card-body">
                 {% if status_breakdown %}
-                <div class="row g-2">
+                <div class="row g-3">
                     {% for status in status_breakdown %}
                     {% set colors = {'Active': 'success', 'Expired': 'danger', 'Pending': 'warning', 'Lapsed': 'secondary', 'Cancelled': 'dark'} %}
                     {% set color = colors.get(status['status'], 'secondary') %}
                     <div class="col-6">
-                        <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                        <div class="d-flex justify-content-between align-items-center p-3 border rounded" style="background: #fafbfc;">
                             <span class="badge-status badge-{{ status['status']|lower }}">{{ status['status'] }}</span>
-                            <span style="font-weight: 600;">{{ status['count'] }}</span>
+                            <span style="font-size: 1.25rem; font-weight: 700; color: #1a1a2e;">{{ status['count'] }}</span>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <div style="text-align: center; color: #6b7280; padding: 20px;">No data available</div>
+                <div style="text-align: center; padding: 40px; color: #6b7280;">No data available</div>
                 {% endif %}
             </div>
         </div>
@@ -107,11 +109,13 @@
     
     <!-- Monthly New -->
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">New Clients (Last 6 Months)</div>
-            <div class="card-body">
+        <div class="data-card">
+            <div class="data-card-header">
+                <h5 class="data-card-title">New Clients (Last 6 Months)</h5>
+            </div>
+            <div class="data-card-body">
                 {% if monthly_new %}
-                <table class="table" style="font-size: 0.875rem;">
+                <table class="custom-table">
                     <thead>
                         <tr>
                             <th>Month</th>
@@ -121,14 +125,14 @@
                     <tbody>
                         {% for month_data in monthly_new %}
                         <tr>
-                            <td>{{ month_data['month'] }}</td>
-                            <td style="font-weight: 600;">{{ month_data['count'] }}</td>
+                            <td style="font-weight: 500;">{{ month_data['month'] }}</td>
+                            <td style="font-size: 1.1rem; font-weight: 600;">{{ month_data['count'] }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
                 {% else %}
-                <div style="text-align: center; color: #6b7280; padding: 20px;">No data available</div>
+                <div style="text-align: center; padding: 40px; color: #6b7280;">No data available</div>
                 {% endif %}
             </div>
         </div>
@@ -136,18 +140,22 @@
 </div>
 
 <!-- Quick Links -->
-<div class="row g-3 mt-2">
-    <div class="col-6">
-        <a href="{{ url_for('renewals', filter='30') }}" class="quick-btn">
-            <i class="fas fa-calendar-check"></i>
-            <span>View Renewals</span>
-        </a>
-    </div>
-    <div class="col-6">
-        <a href="{{ url_for('export') }}" class="quick-btn">
-            <i class="fas fa-download"></i>
-            <span>Export Data</span>
-        </a>
-    </div>
+<div class="quick-actions mt-4">
+    <a href="{{ url_for('renewals', filter='30') }}" class="quick-action-btn">
+        <i class="fas fa-calendar-check"></i>
+        <span>View Renewals</span>
+    </a>
+    <a href="{{ url_for('export') }}" class="quick-action-btn">
+        <i class="fas fa-download"></i>
+        <span>Export Data</span>
+    </a>
+    <a href="{{ url_for('clients') }}" class="quick-action-btn">
+        <i class="fas fa-users"></i>
+        <span>All Clients</span>
+    </a>
+    <a href="{{ url_for('dashboard') }}" class="quick-action-btn">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+    </a>
 </div>
 {% endblock %}
