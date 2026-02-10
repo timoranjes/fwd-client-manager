@@ -2,62 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>{% block title %}FWD Client Manager{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #0066cc;
-            --primary-dark: #004d99;
-            --secondary-color: #6c757d;
-            --success-color: #198754;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            --nav-height: 60px;
-        }
-        
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-bg);
-            padding-bottom: calc(var(--nav-height) + 20px);
+            font-family: 'Inter', sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px;
         }
         
         /* Mobile Header */
         .mobile-header {
-            display: none;
+            display: flex;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: var(--nav-height);
+            height: 56px;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
             z-index: 1000;
-            padding: 0 1rem;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .mobile-header .brand {
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .mobile-header .brand i {
-            color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
         
         .mobile-header .menu-btn {
@@ -65,92 +40,31 @@
             border: none;
             color: white;
             font-size: 1.25rem;
-            padding: 0.5rem;
-            margin-left: -0.5rem;
+            padding: 8px;
+            margin: -8px;
+            cursor: pointer;
         }
         
-        /* Sidebar */
-        .sidebar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: var(--nav-height);
-            width: 280px;
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            z-index: 1001;
-            overflow-y: auto;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .sidebar.show {
-            transform: translateX(0);
-        }
-        
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        
-        .sidebar-overlay.show {
-            display: block;
-        }
-        
-        .sidebar-brand {
-            padding: 1.25rem;
-            font-size: 1.1rem;
+        .mobile-header .brand {
             font-weight: 600;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
         }
         
-        .sidebar-brand i {
-            color: var(--primary-color);
-        }
-        
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 0.875rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border-left: 3px solid transparent;
-            transition: all 0.2s;
-        }
-        
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            border-left-color: var(--primary-color);
-        }
-        
-        .sidebar .nav-link i {
-            width: 1.25rem;
-            text-align: center;
-        }
-        
-        /* Bottom Navigation */
+        /* Bottom Nav */
         .bottom-nav {
-            display: none;
+            display: flex;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: var(--nav-height);
+            height: 56px;
             background: white;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid #e5e7eb;
             z-index: 999;
-            padding: 0 0.5rem;
+            padding: 0;
         }
         
         .bottom-nav .nav-item {
@@ -159,58 +73,114 @@
         }
         
         .bottom-nav .nav-link {
-            color: var(--secondary-color);
-            padding: 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.25rem;
+            height: 100%;
+            color: #6b7280;
+            text-decoration: none;
             font-size: 0.7rem;
-            border-radius: 0;
-            transition: all 0.2s;
+            gap: 2px;
+            padding: 6px 0;
+            border-bottom: 2px solid transparent;
         }
         
         .bottom-nav .nav-link i {
             font-size: 1.25rem;
         }
         
-        .bottom-nav .nav-link:hover, .bottom-nav .nav-link.active {
-            color: var(--primary-color);
-            background: rgba(0,102,204,0.05);
+        .bottom-nav .nav-link.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
         }
         
-        .bottom-nav .nav-link.active {
-            border-bottom: 2px solid var(--primary-color);
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            z-index: 1001;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar.open {
+            left: 0;
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+        
+        .sidebar-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .sidebar-brand {
+            padding: 20px 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.08);
+            border-left-color: #0066cc;
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
         }
         
         /* Main Content */
         .main-content {
-            padding: 1rem;
-        }
-        
-        .page-header {
-            margin-bottom: 1.5rem;
-            padding-top: 0.5rem;
-        }
-        
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 0.5rem;
+            padding: 70px 16px 16px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         /* Cards */
         .stat-card {
             background: white;
             border-radius: 12px;
-            padding: 1.25rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1rem;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 14px;
         }
         
         .stat-icon {
@@ -224,153 +194,59 @@
             flex-shrink: 0;
         }
         
-        .stat-icon.blue { background: rgba(0,102,204,0.1); color: var(--primary-color); }
-        .stat-icon.green { background: rgba(25,135,84,0.1); color: var(--success-color); }
-        .stat-icon.yellow { background: rgba(255,193,7,0.1); color: #d39e00; }
-        .stat-icon.red { background: rgba(220,53,69,0.1); color: var(--danger-color); }
+        .stat-icon.blue { background: rgba(0,102,204,0.1); color: #0066cc; }
+        .stat-icon.green { background: rgba(25,135,84,0.1); color: #198754; }
+        .stat-icon.yellow { background: rgba(255,193,7,0.15); color: #d39e00; }
+        .stat-icon.red { background: rgba(220,53,69,0.1); color: #dc3545; }
         
         .stat-info h3 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1a1a2e;
             margin: 0;
+            color: #1a1a2e;
         }
         
         .stat-info p {
-            color: var(--secondary-color);
+            margin: 0;
+            color: #6b7280;
             font-size: 0.875rem;
-            margin: 0;
         }
         
-        /* Data Cards */
-        .data-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-        
-        .data-card-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .data-card-body {
-            padding: 1rem;
-        }
-        
-        /* Tables */
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        
-        .table-card table {
-            width: 100%;
-            margin: 0;
-        }
-        
-        .table-card th {
-            background: #f8f9fa;
-            padding: 0.75rem 1rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: none;
-        }
-        
-        .table-card td {
-            padding: 0.875rem 1rem;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
-        
-        /* Badges */
-        .badge-status {
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            display: inline-block;
-        }
-        
-        .badge-active { background: rgba(25,135,84,0.1); color: var(--success-color); }
-        .badge-expired { background: rgba(220,53,69,0.1); color: var(--danger-color); }
-        .badge-pending { background: rgba(255,193,7,0.15); color: #d39e00; }
-        
-        /* Buttons */
-        .btn-primary-custom {
-            background: var(--primary-color);
-            border: none;
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 500;
-            color: white;
-        }
-        
-        .btn-primary-custom:hover {
-            background: var(--primary-dark);
-            color: white;
-        }
-        
-        /* Forms */
-        .form-label-custom {
-            font-weight: 500;
+        /* Page Title */
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: #1a1a2e;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        
-        .form-control-custom {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 0.75rem 1rem;
-            width: 100%;
-        }
-        
-        .form-control-custom:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
-            outline: none;
+            margin-bottom: 16px;
         }
         
         /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 10px;
+            margin-bottom: 16px;
         }
         
         .quick-action-btn {
             background: white;
-            border: 1px solid #e9ecef;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
-            padding: 1rem;
+            padding: 16px 12px;
             text-align: center;
-            color: var(--primary-color);
+            color: #0066cc;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
             transition: all 0.2s;
         }
         
         .quick-action-btn:hover {
-            border-color: var(--primary-color);
-            background: rgba(0,102,204,0.05);
-            color: var(--primary-color);
+            border-color: #0066cc;
+            background: rgba(0,102,204,0.02);
+            color: #0066cc;
         }
         
         .quick-action-btn i {
@@ -378,17 +254,131 @@
         }
         
         .quick-action-btn span {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
         
-        /* Activity Items */
-        .activity-item {
-            padding: 0.75rem 0;
+        /* Data Card */
+        .data-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .data-card-header {
+            padding: 12px 16px;
             border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-card-body {
+            padding: 16px;
+        }
+        
+        /* Table */
+        .data-card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .data-card th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .data-card td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.875rem;
+        }
+        
+        .data-card tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badges */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-active { background: rgba(25,135,84,0.1); color: #198754; }
+        .badge-expired { background: rgba(220,53,69,0.1); color: #dc3545; }
+        .badge-pending { background: rgba(255,193,7,0.15); color: #d39e00; }
+        
+        /* Buttons */
+        .btn-primary-custom {
+            background: #0066cc;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background: #0052a3;
+            color: white;
+        }
+        
+        /* Forms */
+        .form-label-custom {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .form-control-custom {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-control-custom:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+        
+        /* Avatar */
+        .client-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0066cc;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        /* Activity */
+        .activity-item {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .activity-item:last-child {
@@ -399,100 +389,73 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: #f0f0f0;
+            background: #f3f4f6;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.875rem;
             flex-shrink: 0;
         }
         
-        .activity-time {
-            font-size: 0.75rem;
-            color: var(--secondary-color);
-        }
-        
-        /* Client Avatar */
-        .client-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-        
-        /* Hide sidebar on desktop, show on mobile */
+        /* Desktop Styles */
         @media (min-width: 992px) {
-            .mobile-header, .sidebar, .sidebar-overlay, .bottom-nav {
+            .mobile-header, .bottom-nav, .sidebar, .sidebar-overlay {
                 display: none !important;
             }
             
-            .main-content {
-                margin-left: 250px;
-                padding: 2rem;
+            body {
+                padding-bottom: 0;
+                padding-left: 250px;
             }
             
             .sidebar {
                 display: block;
-                transform: none;
+                left: 0;
                 position: fixed;
+                width: 250px;
                 height: 100vh;
             }
-        }
-        
-        @media (max-width: 991.98px) {
-            .mobile-header, .bottom-nav {
-                display: flex;
-            }
             
-            .sidebar, .sidebar-overlay {
-                display: block;
+            .main-content {
+                padding: 24px 32px;
             }
         }
         
-        /* Mobile-specific utilities */
-        @media (max-width: 575.98px) {
-            .stat-card {
-                padding: 1rem;
-            }
-            
-            .stat-icon {
-                width: 44px;
-                height: 44px;
-            }
-            
-            .stat-info h3 {
-                font-size: 1.25rem;
-            }
-            
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .page-title {
-                font-size: 1.25rem;
-            }
-        }
-        
-        /* Touch-friendly buttons */
-        .btn, .nav-link, a {
-            min-height: 44px;
-        }
-        
-        /* Alert styling */
+        /* Alerts */
         .alert {
             border-radius: 8px;
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt" style="color: #0066cc;"></i>
+            FWD Client Manager
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a class="nav-link {% if request.endpoint == 'clients' or 'client' in request.endpoint %}active{% endif %}" href="{{ url_for('clients') }}">
+                <i class="fas fa-users"></i> Clients
+            </a>
+            <a class="nav-link {% if request.endpoint == 'renewals' %}active{% endif %}" href="{{ url_for('renewals') }}">
+                <i class="fas fa-calendar-alt"></i> Renewals
+            </a>
+            <a class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}" href="{{ url_for('calendar') }}">
+                <i class="fas fa-calendar"></i> Calendar
+            </a>
+            <a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}">
+                <i class="fas fa-chart-bar"></i> Reports
+            </a>
+        </nav>
+    </div>
+    
     <!-- Mobile Header -->
     <div class="mobile-header">
         <button class="menu-btn" onclick="toggleSidebar()">
@@ -504,53 +467,6 @@
         </div>
         <div style="width: 40px;"></div>
     </div>
-    
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-shield-alt"></i> FWD Client Manager
-        </div>
-        <nav class="nav flex-column">
-            <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}" onclick="toggleSidebar()">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </a>
-            <a class="nav-link {% if request.endpoint == 'clients' or 'client' in request.endpoint %}active{% endif %}" href="{{ url_for('clients') }}" onclick="toggleSidebar()">
-                <i class="fas fa-users"></i> Clients
-            </a>
-            <a class="nav-link {% if request.endpoint == 'renewals' %}active{% endif %}" href="{{ url_for('renewals') }}" onclick="toggleSidebar()">
-                <i class="fas fa-calendar-alt"></i> Renewals
-            </a>
-            <a class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}" href="{{ url_for('calendar') }}" onclick="toggleSidebar()">
-                <i class="fas fa-calendar"></i> Calendar
-            </a>
-            <a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}" onclick="toggleSidebar()">
-                <i class="fas fa-chart-bar"></i> Reports
-            </a>
-        </nav>
-    </div>
-    
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a class="nav-link {% if request.endpoint == 'clients' or 'client' in request.endpoint %}active{% endif %}" href="{{ url_for('clients') }}">
-            <i class="fas fa-users"></i>
-            <span>Clients</span>
-        </a>
-        <a class="nav-link {% if request.endpoint == 'renewals' %}active{% endif %}" href="{{ url_for('renewals') }}">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Renewals</span>
-        </a>
-        <a class="nav-link" href="{{ url_for('add_client') }}">
-            <i class="fas fa-plus-circle" style="font-size: 1.5rem;"></i>
-            <span>Add</span>
-        </a>
-    </nav>
     
     <!-- Main Content -->
     <div class="main-content">
@@ -568,30 +484,48 @@
         {% block content %}{% endblock %}
     </div>
     
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'clients' or 'client' in request.endpoint %}active{% endif %}" href="{{ url_for('clients') }}">
+                <i class="fas fa-users"></i>
+                <span>Clients</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'renewals' %}active{% endif %}" href="{{ url_for('renewals') }}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Renewals</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a class="nav-link" href="{{ url_for('add_client') }}">
+                <i class="fas fa-plus-circle" style="font-size: 1.4rem;"></i>
+                <span>Add</span>
+            </a>
+        </div>
+    </nav>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
         function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('show');
-            document.querySelector('.sidebar-overlay').classList.toggle('show');
-            document.body.style.overflow = document.querySelector('.sidebar').classList.contains('show') ? 'hidden' : '';
+            document.getElementById('sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
+            document.body.style.overflow = document.getElementById('sidebar').classList.contains('open') ? 'hidden' : '';
         }
         
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('touchstart', function(e) {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            if (sidebar.classList.contains('show') && 
-                !sidebar.contains(e.target) && 
-                !e.target.closest('.menu-btn')) {
-                toggleSidebar();
-            }
-        });
-        
-        // Prevent zoom on double tap
-        document.addEventListener('dblclick', function(e) {
-            e.preventDefault();
-        });
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.querySelector('.sidebar-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
     </script>
     {% block scripts %}{% endblock %}
 </body>
