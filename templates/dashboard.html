@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FWD Client Manager{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h1 class="page-title">Dashboard</h1>
+    <a href="{{ url_for('add_client') }}" class="btn btn-primary-custom text-white">
+        <i class="fas fa-plus"></i> Add Client
+    </a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-value">{{ total_clients }}</div>
+            <div class="stat-label">Total Clients</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value">{{ active_policies }}</div>
+            <div class="stat-label">Active Policies</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon yellow">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">{{ upcoming_renewals }}</div>
+            <div class="stat-label">Renewals (30 days)</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="stat-value">{{ expired_policies }}</div>
+            <div class="stat-label">Expired Policies</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Recent Clients -->
+    <div class="col-lg-8">
+        <div class="table-card">
+            <div class="data-card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-users me-2"></i> Recent Clients</span>
+                <a href="{{ url_for('clients') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Policy Type</th>
+                            <th>Coverage</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in recent_clients %}
+                        <tr onclick="window.location.href='{{ url_for('client_detail', client_id=client['id']) }}'" style="cursor: pointer;">
+                            <td>
+                                <div class="fw-600">{{ client['name'] }}</div>
+                                <div class="text-muted small">{{ client['email'] or 'No email' }}</div>
+                            </td>
+                            <td>{{ client['policy_type'] or '-' }}</td>
+                            <td>
+                                {% if client['coverage_amount'] %}
+                                    ${{ "{:,.0f}".format(client['coverage_amount']) }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ client['policy_end_date'] or '-' }}</td>
+                            <td>
+                                <span class="badge badge-status badge-{{ client['status']|lower }}">
+                                    {{ client['status'] }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                No clients yet. <a href="{{ url_for('add_client') }}">Add your first client</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="col-lg-4">
+        <div class="data-card">
+            <div class="data-card-header">
+                <i class="fas fa-history me-2"></i> Recent Activity
+            </div>
+            <div class="data-card-body">
+                {% for activity in recent_activities %}
+                <div class="activity-item d-flex align-items-start">
+                    <div class="activity-icon">
+                        <i class="fas fa-user-plus" style="color: var(--success-color);"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-500">{{ activity['client_name'] or 'System' }}</span>
+                            <span class="activity-time">
+                                {{ activity['created_at'][:10] }}
+                            </span>
+                        </div>
+                        <div class="text-muted small">{{ activity['description'] }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    No activity yet
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="data-card">
+            <div class="data-card-header">
+                <i class="fas fa-bolt me-2"></i> Quick Actions
+            </div>
+            <div class="data-card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_client') }}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="fas fa-user-plus mb-2 d-block" style="font-size: 1.5rem;"></i>
+                            Add Client
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('renewals', filter='30') }}" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-calendar-check mb-2 d-block" style="font-size: 1.5rem;"></i>
+                            View Renewals
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('search') }}" class="btn btn-outline-secondary w-100 py-3">
+                            <i class="fas fa-search mb-2 d-block" style="font-size: 1.5rem;"></i>
+                            Search Clients
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('export') }}" class="btn btn-outline-success w-100 py-3">
+                            <i class="fas fa-file-export mb-2 d-block" style="font-size: 1.5rem;"></i>
+                            Export Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add clickable row styling
+document.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', function() {
+        window.location.href = this.dataset.href || this.querySelector('a')?.href;
+    });
+});
+</script>
+{% endblock %}

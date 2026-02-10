@@ -1,0 +1,2 @@
+# FWD Client Management System Dependencies
+flask>=2.0.0
